@@ -23,6 +23,8 @@
                 {% endfor %}
             </div>
         {% endfor %}
+        <!-- Correction du name et vérification de la valeur -->
+        <input type="hidden" name="transcription_id" value="{{ transcription.id }}">
         <button type="submit">Soumettre</button>
     </form>
 </body>

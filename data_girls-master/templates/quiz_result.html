@@ -3,24 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz</title>
+    <title>Résultats du Quiz</title>
+    <style>
+        .correct { color: green; font-weight: bold; }
+        .incorrect { color: red; font-weight: bold; }
+    </style>
 </head>
 <body>
-    <h1>Quiz basé sur la transcription</h1>
-    <form action="{{ url_for('submit_quiz') }}" method="POST">
-        {% for question in questions %}
-            <div>
-                <p><strong>{{ question.question }}</strong></p>
-                {% for choice in question.choices %}
-                    <label>
-                        <input type="radio" name="question_{{ loop.parent.index0 }}" value="{{ choice }}" required>
-                        {{ choice }}
-                    </label><br>
-                {% endfor %}
-            </div>
-        {% endfor %}
-        <input type="hidden" name="transcription_id" value="{{ transcription.id }}">
-        <button type="submit">Soumettre le quiz</button>
-    </form>
+    <h1>Résultats du Quiz</h1>
+    <p>Score final : {{ score }}/{{ total }}</p>
+
+    {% for result in results %}
+    <div class="question-result">
+        <h3>Question {{ loop.index }}:</h3>
+        <p>{{ result.question_text }}</p>
+
+        <h4>Vos réponses :</h4>
+        <ul>
+            {% for choice in result.choices %}
+            <li class="
+                {% if choice == result.user_answer %}
+                    {% if choice == result.correct_answer %}correct{% else %}incorrect{% endif %}
+                {% endif %}">
+                {{ choice }}
+                {% if choice == result.correct_answer %} (Correct){% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+
+    <a href="{{ url_for('enter_id') }}">Retour à l'accueil</a>
 </body>
 </html>

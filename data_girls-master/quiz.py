@@ -319,33 +319,48 @@ def quiz1(transcription_id):
     quiz_questions = parse_quiz_response(quiz_response)
     if not quiz_questions:
         return "Erreur lors du parsing des questions.", 500
+    session['current_transcription_id'] = transcription_id
 
     return render_template('quiz1.html', transcription=transcription, questions=quiz_questions)
-
 @app.route('/submit_quiz', methods=['POST'])
 @login_required
 def submit_quiz():
     score = 0
-    answers = {}
+    results = []
 
-    # Récupérer l'ID de la transcription
     transcription_id = request.form.get('transcription_id')
+    if not transcription_id:
+        return "Aucun ID reçu.", 400
+
     transcription = db.session.get(Transcription, transcription_id)
     if not transcription:
-        return "ID de transcription invalide.", 400
+        return f"ID invalide : {transcription_id}", 400
 
-    # Générer les questions à partir du texte transcrit
     quiz_response = generate_summary_from_text(transcription.text, api_key)
     quiz_questions = parse_quiz_response(quiz_response)
 
-    # Vérifier les réponses de l'étudiant
     for i, question in enumerate(quiz_questions):
         student_answer = request.form.get(f"question_{i}")
-        answers[i] = student_answer  # Stocker la réponse de l'étudiant
-        if student_answer == question['answer']:  # Comparer avec la bonne réponse
+        correct_answer = question['answer']
+
+        # Stocker les résultats sous forme de dictionnaire
+        results.append({
+            'question_text': question['question'],
+            'choices': question['choices'],
+            'user_answer': student_answer,
+            'correct_answer': correct_answer
+        })
+
+        if student_answer == correct_answer:
             score += 1
 
-    return render_template('quiz_result.html', score=score, total=len(quiz_questions), answers=answers, questions=quiz_questions)@app.route('/generate_summary_pdf/<transcription_id>', methods=['GET'])
+    return render_template(
+        'quiz_result.html', 
+        score=score, 
+        total=len(quiz_questions), 
+        results=results
+    )
+
 @login_required
 def generate_summary_pdf(transcription_id):
     if current_user.role != "etudiant":
