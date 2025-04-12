@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/q.jpg') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 40px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #4CAF50;
+        }
+
+        .btn {
+            font-size: 40px;
+            padding: 20px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 20px;
+        }
+
+        .btn:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .transcription-info {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .transcription-id {
+            font-weight: bold;
+            color: #2E8B57;
+        }
+
+        .logo {
+            width: 50px; /* Adjust the size of the logo */
+            height: 50px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        form {
+            font-size: 1.2em;
+            text-align: left;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="/static/images/reading.png" class="logo" alt="Teacher Logo">
+        <h1>Quiz </h1>
+    </div>
+    <form action="{{ url_for('submit_quiz') }}" method="POST">
+        {% for question in questions %}
+            <div>
+                <p><strong>{{ question.question }}</strong></p>
+                <!-- Stocke l'index de la question dans une variable -->
+                {% set question_index = loop.index0 %}
+
+                {% for choice in question.choices %}
+                    <label>
+                        <!-- Utilise la variable question_index pour le name -->
+                        <input type="radio" name="question_{{ question_index }}" value="{{ choice }}" required>
+                        {{ choice }}
+                    </label><br>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <!-- Correction du name et vérification de la valeur -->
+        <input type="hidden" name="transcription_id" value="{{ transcription.id }}">
+        <button type="submit">Soumettre</button>
+    </form>
+    {% if current_user.is_authenticated %}
+        <div style="position: fixed; top: 20px; right: 20px;">
+            <a href="{{ url_for('logout') }}" style="color: #4CAF50; text-decoration: none;">Déconnexion</a>
+        </div>
+    {%endif%}
+</body>
+</html>

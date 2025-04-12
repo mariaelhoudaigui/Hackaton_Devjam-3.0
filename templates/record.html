@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/q.jpg') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 40px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #4CAF50;
+        }
+
+        .btn {
+            font-size: 40px;
+            padding: 20px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 20px;
+        }
+
+        .btn:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .transcription-info {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .transcription-id {
+            font-weight: bold;
+            color: #2E8B57;
+        }
+
+        .logo {
+            width: 50px; /* Adjust the size of the logo */
+            height: 50px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .logout-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+        }
+
+        .logout-link {
+            color: #4CAF50;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+
+        .logout-link:hover {
+            color: #2E8B57;
+        }
+    </style>
+    <script>
+        let isRecording = false;
+
+        function startRecording() {
+            if (!isRecording) {
+                fetch('/start_recording')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data.message);
+                        isRecording = true;
+                        document.getElementById("startButton").disabled = true;
+                        document.getElementById("stopButton").disabled = false;
+                    });
+            }
+        }
+
+        function stopRecording() {
+            if (isRecording) {
+                fetch('/stop_recording')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data.message);
+                        if (data.transcription_id) {
+                            document.getElementById('transcription_id').textContent = data.transcription_id;
+                        } else {
+                            alert("Erreur lors de la transcription");
+                        }
+                        isRecording = false;
+                        document.getElementById("startButton").disabled = false;
+                        document.getElementById("stopButton").disabled = true;
+                    });
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <!-- Logo teacher before the title -->
+    <div class="header">
+        <img src="/static/images/teacher.png" class="logo" alt="Teacher Logo">
+        <h1>Enregistrement Audio</h1>
+    </div>
+
+    <!-- Boutons avec icônes -->
+    <button id="startButton" class="btn" onclick="startRecording()">
+        <i class="fas fa-microphone"></i>
+    </button>
+
+    <button id="stopButton" class="btn" onclick="stopRecording()" disabled>
+        <i class="fas fa-stop"></i>
+    </button>
+
+    <!-- Affichage de l'ID de transcription -->
+    <div class="transcription-info">
+        <p>ID du cours : <span id="transcription_id" class="transcription-id"></span></p>
+    </div>
+    {% if current_user.is_authenticated %}
+        <div class="logout-container">
+            <a class="logout-link" href="{{ url_for('logout') }}">Déconnexion</a>
+        </div>
+    {% endif %}
+
+</body>
+</html>
