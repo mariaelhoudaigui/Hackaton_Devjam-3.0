@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizz Master</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/q.jpg') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #f6d365, #fda085);
+            color: #333;
+            text-align: center;
+            padding: 60px 20px 0px;
+            margin: 0px;
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 1.2em;
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            background-color: #ffffffcc;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #ffffff;
+            transform: scale(1.05);
+        }
+        .recommendations {
+            margin-top: 50px;
+            background-color: #fff8ee;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .recommendations h2 {
+            margin-bottom: 20px;
+        }
+        .recommendations ul {
+            text-align: left;
+            line-height: 1.6;
+            padding-left: 20px;
+        }
+        .team-section {
+            margin-top: 60px;
+            background-color: #fff;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .team-section h2 {
+            margin-bottom: 30px;
+        }
+
+        .team-members {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .member {
+            text-align: center;
+            max-width: 200px;
+        }
+
+        .member img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .member h3 {
+            margin: 10px 0 5px 0;
+        }
+
+        .member a {
+            color: #555;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .member a:hover {
+            color: #000;
+            text-decoration: underline;
+        }
+        .aboutus {
+            font-size: xx-large;
+            color: #9C1A1C;
+        }
+        .copyright {
+            position: relative;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8em;
+            color: darkgrey;
+            padding-top: 20px;
+            margin-bottom: 0px;
+            padding-bottom: 0px;
+        }
+        .decorations {
+            position: absolute;
+            top: 5%;
+            width: 150px;
+            z-index: 1;
+        }
+        .decorations.left {
+            left: 20px;
+        }
+        .decor-img {
+            width: 200%;
+            height: auto;
+            animation: float 3s ease-in-out infinite;
+        }
+          .member-role {
+        font-size: 1em;
+        color: #777;
+        margin-bottom: 10px;
+        }
+
+        /* Animation flottante légère */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+         /* Team section */
+        .team-section {
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .team-member {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #f6d365;
+            margin-bottom: 10px;
+        }
+
+        .member-name {
+            font-size: 1em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .social-links a img {
+            width: 24px;
+            height: 24px;
+        }
+
+    </style>
+
+</head>
+<body>
+    <div class="decorations left">
+        <img src="{{ url_for('static', filename='images/dns.png') }}" alt="Décoration gauche" class="decor-img">
+    </div>
+    <h1>Quiz Master</h1>
+    <p>Facilitez l’apprentissage, dynamisez vos cours et révolutionnez votre manière d’enseigner avec Quiz Master.</p>
+
+    <div class="button-container">
+        <a href="{{ url_for('register') }}" class="btn">S'inscrire</a>
+        <a href="{{ url_for('login') }}" class="btn">Connexion</a>
+    </div>
+
+    <div class="recommendations">
+        <h2>✨ Pourquoi choisir Quiz Master ?</h2>
+        <ul>
+            <li>Interface simple et intuitive pour tous les professeurs et les étudiants.</li>
+            <li>Enregistrez et organisez vos cours de manière rapide et performante.</li>
+            <li>Créez des quiz interactifs et des PDF clairs pour booster l’apprentissage de vos étudiants.</li>
+            <li>Intégration de l'IA pour vous garantir des résultats précis et performants.</li>
+        </ul>
+    </div>
+        <!-- Team Section -->
+    <div class="team-section">
+        <div class="team-member">
+            <img src="/static/images/maria.png" alt="Maria" class="profile-pic">
+            <div class="member-name">Maria EL HOUDAIGUI</div>
+            <div class="member-role">Data Engineer</div>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/maria-el-houdaigui/" target="_blank">
+                    <img src="https://img.icons8.com/?size=100&id=8808&format=png&color=000000" alt="LinkedIn" class="social-icon">
+                </a>
+                <a href="https://github.com/mariaelhoudaigui" target="_blank">
+                    <img src="https://img.icons8.com/?size=100&id=3tC9EQumUAuq&format=png&color=000000" alt="GitHub" class="social-icon">
+                </a>
+            </div>
+        </div>
+
+        <div class="team-member">
+            <img src="/static/images/ilham.png" alt="Ilham" class="profile-pic">
+            <div class="member-name">Ilham BOUATIOUI</div>
+            <div class="member-role">Data Scientist</div>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/ilham-bouatioui/" target="_blank">
+                    <img src="https://img.icons8.com/?size=100&id=8808&format=png&color=000000" alt="LinkedIn" class="social-icon">
+                </a>
+                <a href="https://github.com/IlhamBouatioui15" target="_blank">
+                    <img src="https://img.icons8.com/?size=100&id=3tC9EQumUAuq&format=png&color=000000" alt="GitHub" class="social-icon">
+                </a>
+            </div>
+        </div>
+
+        <div class="team-member">
+            <img src="/static/images/imane.png" alt="Imane" class="profile-pic">
+            <div class="member-name">Imane BENZEGUINE</div>
+            <div class="member-role">AI Engineer</div>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/imane-benzegunine/" target="_blank">
+                    <img src="https://img.icons8.com/?size=100&id=8808&format=png&color=000000" alt="LinkedIn" class="social-icon">
+                </a>
+                <a href="https://github.com/ImaneBenzegunine" target="_blank">
+                    <img src="https://img.icons8.com/?size=100&id=3tC9EQumUAuq&format=png&color=000000" alt="GitHub" class="social-icon">
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="copyright">
+        <p >&copy; 2025 Quiz Master. Tous droits réservés.</p>
+    </div>
+
+</body>
+</html>

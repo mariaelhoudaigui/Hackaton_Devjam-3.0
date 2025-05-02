@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/q.jpg') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: black;
+        }
+
+        .btn {
+            font-size: 40px;
+            padding: 20px;
+            border: none;
+            background-color: #fda085;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px;
+        }
+
+        .btn:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        .btn:hover {
+            background-color: #f6d365;
+            transform: scale(1.1);
+        }
+
+        .btn.recording {
+            background-color: #e74c3c;
+        }
+
+        .transcription-info {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .transcription-id {
+            font-weight: bold;
+            color: #fda085;
+            font-size: 1.5em;
+            text-transform: uppercase;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            margin-right: 20px;
+            margin-bottom: 30px;
+            vertical-align: middle;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .visualizer {
+            width: 200px;
+            height: 50px;
+            margin: 20px auto;
+            position: relative;
+            display: none;
+        }
+
+        .bar {
+            background: #fda085;
+            width: 8px;
+            height: 5px;
+            position: absolute;
+            bottom: 0;
+            border-radius: 4px;
+            animation: equalize 1.5s infinite ease-out;
+        }
+
+        @keyframes equalize {
+            0% { height: 5px; }
+            50% { height: 30px; }
+            100% { height: 5px; }
+        }
+
+        .status {
+            margin: 15px 0;
+            font-size: 1.2em;
+            font-weight: bold;
+            min-height: 24px;
+        }
+
+        .status.recording {
+            color: #e74c3c;
+        }
+
+        .loading-dots {
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .loading-dots span {
+            opacity: 0;
+            animation: dot 1.5s infinite;
+            display: inline-block;
+        }
+
+        .loading-dots span:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dots span:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .loading-dots span:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes dot {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Logo teacher before the title -->
+    <div class="header">
+        <img src="/static/images/teacher.png" class="logo" alt="Teacher Logo">
+        <h1>Enregistrement Audio</h1>
+    </div>
+
+    <div id="status" class="status">Prêt à enregistrer</div>
+
+    <!-- Audio visualizer -->
+    <div class="visualizer" id="visualizer"></div>
+
+    <!-- Unique button with dynamic state -->
+    <button id="recordButton" class="btn" onclick="toggleRecording()">
+        <i class="fas fa-microphone"></i>
+    </button>
+
+    <!-- ID du cours masqué par défaut -->
+    <div class="transcription-info" id="transcriptionInfo" style="display: none;">
+        <p>
+            ID du cours :
+            <span id="transcription_id" class="transcription-id"></span>
+            <i class="fas fa-copy" id="copyIcon" title="Copier" style="cursor:pointer; margin-left: 10px;" onclick="copierId()"></i>
+        </p>
+    </div>
+
+    {% if current_user.is_authenticated %}
+    <div style="position: absolute; top: 20px; right: 20px;">
+        <a href="{{ url_for('logout') }}"
+           style="
+               position: relative;
+               padding: 10px 20px;
+               background: linear-gradient(90deg, #fda085, #f6d365);
+               color: white;
+               border: none;
+               border-radius: 25px;
+               text-decoration: none;
+               font-weight: bold;
+               font-size: 0.9em;
+               box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+               transition: transform 0.2s;
+               display: inline-block;
+           "
+           onmouseover="this.style.transform='scale(1.05)'"
+           onmouseout="this.style.transform='scale(1)'"
+        >
+            Déconnexion
+        </a>
+    </div>
+    {% endif %}
+
+    <script>
+        let isRecording = false;
+
+        function createVisualizer() {
+            const visualizer = document.getElementById("visualizer");
+            visualizer.innerHTML = '';
+            for (let i = 0; i < 20; i++) {
+                const bar = document.createElement("div");
+                bar.className = "bar";
+                bar.style.left = `${i * 10}px`; // corrigé ici
+                bar.style.animationDelay = `${i * 0.1}s`; // corrigé ici
+                visualizer.appendChild(bar);
+            }
+        }
+
+
+        function startVisualizer() {
+            document.getElementById("visualizer").style.display = 'block';
+            createVisualizer();
+        }
+
+        function stopVisualizer() {
+            document.getElementById("visualizer").style.display = 'none';
+            const bars = document.querySelectorAll(".bar");
+            bars.forEach(bar => {
+                bar.style.animation = 'none';
+                bar.style.height = '5px';
+            });
+        }
+
+        function updateStatus(isRecording) {
+            const status = document.getElementById("status");
+            if (isRecording) {
+                status.innerHTML = "Enregistrement en cours<span class='loading-dots'><span>.</span><span>.</span><span>.</span></span>";
+                status.className = "status recording";
+            } else {
+                status.textContent = "Prêt à enregistrer";
+                status.className = "status";
+            }
+        }
+
+        function toggleRecording() {
+            if (!isRecording) {
+                // Start recording
+                fetch('/start_recording')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data.message);
+                        isRecording = true;
+                        document.getElementById("recordButton").innerHTML = '<i class="fas fa-stop"></i>';
+                        document.getElementById("recordButton").classList.add("recording");
+                        startVisualizer();
+                        updateStatus(true);
+                    });
+            } else {
+                // Stop recording
+                fetch('/stop_recording')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data.message);
+                        if (data.transcription_id) {
+                            document.getElementById('transcription_id').textContent = data.transcription_id;
+                            document.getElementById('transcriptionInfo').style.display = 'block';
+                        } else {
+                            alert("Erreur lors de la transcription");
+                        }
+                        isRecording = false;
+                        document.getElementById("recordButton").innerHTML = '<i class="fas fa-microphone"></i>';
+                        document.getElementById("recordButton").classList.remove("recording");
+                        stopVisualizer();
+                        updateStatus(false);
+                    });
+            }
+        }
+
+        function copierId() {
+            const idText = document.getElementById('transcription_id').textContent;
+            navigator.clipboard.writeText(idText)
+                .then(() => {
+                    const message = document.getElementById('copyMessage');
+                    message.style.display = 'inline';
+                    setTimeout(() => {
+                        message.style.display = 'none';
+                    }, 2000);
+                });
+        }
+
+        // Initialize visualizer
+        createVisualizer();
+    </script>
+</body>
+</html>

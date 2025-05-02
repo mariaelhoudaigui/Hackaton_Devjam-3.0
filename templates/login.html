@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/q.jpg') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #f6d365, #fda085);
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffffee;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 25px;
+        }
+
+        .error-message {
+            background-color: #ffdddd;
+            color: #c00;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        form input[type="email"],
+        form input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color:#fda085;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #f6d365;
+        }
+
+        a {
+            display: block;
+            margin-top: 15px;
+            color: #333;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #f6d365;
+            text-decoration: underline;
+      }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Connexion</h2>
+
+    {% if error %}
+    <div class="error-message">{{ error }}</div>
+    {% endif %}
+
+    <form action="/login" method="post">
+        <input type="email" name="email" placeholder="Email" value="{{ email }}" required>
+        <input type="password" name="password" placeholder="Mot de passe" required>
+        <button type="submit">Se connecter</button>
+    </form>
+
+    <a href="/register">Pas encore inscrit ? Créez un compte</a>
+</div>
+
+</body>
+</html>

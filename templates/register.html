@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/q.jpg') }}">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #f6d365, #fda085);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffffee;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .error-message {
+            background-color: #ffdddd;
+            color: #c00;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        form input[type="text"],
+        form input[type="email"],
+        form input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .radio-group {
+            margin-bottom: 20px;
+            text-align: center;
+            color :  #fda085;
+        }
+
+        .radio-group label {
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        .radio-group input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color:  #fda085;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #f6d365;
+        }
+
+        a {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: small;
+        }
+
+        a:hover {
+            color: #f6d365;
+            text-decoration: underline;
+      }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Créer un compte</h2>
+
+    <!-- Affichage des erreurs -->
+    {% if error %}
+    <div class="error-message">{{ error }}</div>
+    {% endif %}
+
+    <form action="/register" method="post">
+        <div class="radio-group">
+            <label><input type="radio" name="role" value="etudiant" required> Étudiant</label>
+            <label><input type="radio" name="role" value="professeur" required> Professeur</label>
+        </div>
+        <input type="text" name="first_name" placeholder="Prénom" required>
+        <input type="text" name="last_name" placeholder="Nom" required>
+        <input type="email" name="email" placeholder="Email" value="{{ email }}" required>
+        <input type="password" name="password" placeholder="Mot de passe" required>
+        <input type="password" name="confirm_password" placeholder="Confirmez le mot de passe" required>
+
+        <button type="submit">S'inscrire</button>
+    </form>
+
+    <a href="/login">Vous avez déjà un compte ? Connectez-vous</a>
+</div>
+
+</body>
+</html>

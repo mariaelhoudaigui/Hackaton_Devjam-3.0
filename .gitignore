@@ -1,0 +1,16 @@
+# Ignorer l'environnement virtuel
+venv/
+.venv/
+
+# Ignorer les fichiers de cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorer les fichiers sensibles
+.env
+.vscode/
+
+# Ignorer le fichier PDF généré
+resume.pdf

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contenu du cours</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/q.jpg') }}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h2 {
+            color: black;
+            margin-bottom: 20px;
+        }
+
+        .content-options {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .option-button {
+            background-color: #fda085;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            width: 80%;
+            margin: 10px 0;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .option-button:hover {
+            background-color: #f6d365;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <h2><img src="/static/images/reading.png" class="logo"> Contenu du cours</h2>
+
+    <div class="content-options">
+        <!-- Bouton pour télécharger le résumé PDF -->
+        <a href="{{ url_for('generate_summary_pdf', transcription_id=transcription.id) }}" class="option-button">
+            Télécharger le résumé PDF
+        </a>
+
+        <!-- Bouton pour tester les connaissances avec le quiz -->
+        <a href="{{ url_for('quiz', transcription_id=transcription.id) }}" class="option-button">
+            Tester vos connaissances
+        </a>
+    </div>
+
+    {% if current_user.is_authenticated %}
+    <div style="position: absolute; top: 20px; right: 20px;">
+        <a href="{{ url_for('logout') }}"
+           style="
+               position: relative;
+               padding: 10px 20px;
+               background: linear-gradient(90deg, #fda085, #f6d365);
+               color: white;
+               border: none;
+               border-radius: 25px;
+               text-decoration: none;
+               font-weight: bold;
+               font-size: 0.9em;
+               box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+               transition: transform 0.2s;
+               display: inline-block;
+           "
+           onmouseover="this.style.transform='scale(1.05)'"
+           onmouseout="this.style.transform='scale(1)'"
+        >
+            Déconnexion
+        </a>
+    </div>
+{% endif %}
+</body>
+</html>

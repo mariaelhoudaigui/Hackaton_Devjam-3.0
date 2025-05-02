@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/q.jpg') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 40px;
+        }
+        label {
+            display: flex; /* pour mieux aligner bouton + texte */
+            align-items: center;
+            margin: 2px 0; /* presque collé ! */
+            font-size: 0.8em; /* plus petit encore */
+            line-height: 1; /* réduit l'espacement vertical du texte */
+        }
+
+        input[type="radio"] {
+            transform: scale(0.8);
+            margin-right: 8px; /* petit espace entre bouton et texte */
+        }
+
+
+        h1 {
+            margin-bottom: 30px;
+            color: #fda085;
+        }
+
+        .btn {
+            font-size: 40px;
+            padding: 20px;
+            border: none;
+            background-color: #fda085;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 20px;
+        }
+
+        .btn:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        .btn:hover {
+            background-color:  #fda085;
+        }
+
+        .transcription-info {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .transcription-id {
+            font-weight: bold;
+            color:  #f6d365;
+        }
+
+        .logo {
+            width: 50px; /* Adjust the size of the logo */
+            height: 50px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        form {
+            font-size: 1.2em;
+            text-align: left;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        button {
+            padding: 8px 16px; /* moins de hauteur et de largeur */
+            font-size: 0.8em; /* texte plus petit */
+            background-color: #fda085;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+
+        button:hover {
+            background-color: #fda085;
+        }
+    </style>
+</head>
+<body>
+    <div class="alert-message" style="display: inline-flex; align-items: center; justify-content: flex-start;
+        border: 1px solid #e8de1c; border-radius: 8px; padding: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin: 20px auto; text-align: center;">
+        <i class="fas fa-lightbulb" style="margin-right: 10px; font-size: 1.5em; color: #e8de1c;"></i>
+        <span style="color: #301108;">Pour réussir l'examen, vous devez obtenir plus de 70%. Bonne chance !</span>
+    </div>
+    <div class="header">
+        <img src="/static/images/reading.png" class="logo" alt="Teacher Logo">
+        <h1>Quiz </h1>
+    </div>
+    <form action="{{ url_for('submit_quiz') }}" method="POST">
+        {% for question in questions %}
+            <div>
+                <p><strong>{{ question.question }}</strong></p>
+                <!-- Stocke l'index de la question dans une variable -->
+                {% set question_index = loop.index0 %}
+
+                {% for choice in question.choices %}
+                    <label>
+                        <!-- Utilise la variable question_index pour le name -->
+                        <input type="radio" name="question_{{ question_index }}" value="{{ choice }}" required>
+                        {{ choice }}
+                    </label><br>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <!-- Correction du name et vérification de la valeur -->
+        <input type="hidden" name="transcription_id" value="{{ transcription.id }}">
+        <button type="submit">Soumettre</button>
+    </form>
+    {% if current_user.is_authenticated %}
+    <div style="position: absolute; top: 20px; right: 20px;">
+        <a href="{{ url_for('logout') }}"
+           style="
+               position: relative;
+               padding: 10px 20px;
+               background: linear-gradient(90deg, #fda085, #f6d365);
+               color: white;
+               border: none;
+               border-radius: 25px;
+               text-decoration: none;
+               font-weight: bold;
+               font-size: 0.9em;
+               box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+               transition: transform 0.2s;
+               display: inline-block;
+           "
+           onmouseover="this.style.transform='scale(1.05)'"
+           onmouseout="this.style.transform='scale(1)'"
+        >
+            Déconnexion
+        </a>
+    </div>
+{% endif %}
+
+</body>
+</html>

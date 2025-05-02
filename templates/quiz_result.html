@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats du Quiz</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/q.jpg') }}">
+    <!-- Lien pour Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: #fda085;
+        }
+
+        .question-result {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align : left;
+        }
+        .question-result li i {
+            margin-left: 10px;
+            font-size: 1.5em;
+            color:  #f6d365,; /* Change la couleur de l'icône en vert */
+            text-align : left;
+        }
+
+        .question-result h3 {
+            font-size: 1.2em;
+            color:  #f6d365,;
+            margin-bottom: 10px;
+        }
+
+        .question-result p {
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .question-result h4 {
+            font-size: 1em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .question-result ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .question-result li {
+            font-size: 1em;
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .question-result li.correct,
+        .question-result li.incorrect {
+            background-color: transparent; /* plus de fond rouge ou vert */
+        }
+        .question-result li i {
+            margin-left: 10px;
+            font-size: 1em;
+        }
+        .correct-icon {
+            color: green;
+        }
+        .incorrect-icon {
+            color: red;
+        }
+
+        .logout-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+        }
+
+        .logout-link {
+            color:  #fda085;
+            text-decoration: none;
+            font-size: 1em;
+        }
+
+        .result-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* centré horizontalement */
+            gap: 10px;
+        }
+
+        .result-image {
+            width: 200px;
+            height: auto;
+        }
+
+        .text {
+            text-align: right;
+        }
+
+        .logout-link:hover {
+            color:  #fda085;
+        }
+
+        .final-result {
+        text-align: center;
+        margin-bottom: 30px;
+        }
+
+        .success-text {
+            color: green;
+            font-size: 1.2em;
+        }
+
+        .failure-text {
+            color: red;
+            font-size: 1.2em;
+        }
+
+        .result-header {
+            display: inline-flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .left {
+            text-align: center;
+            color: #333;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .quiz-button {
+            background-color: #fda085;
+            color: white;
+            font-size: 1.1em;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease;
+        }
+
+        .quiz-button:hover {
+            background-color: #f28d68;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Résultats du Quiz</h1>
+
+    <!-- Affichage du pourcentage sans background -->
+    <div class="left">
+        <p>Pourcentage: {{ percentage|round(0)|int }}%</p>
+        <a href="{{ url_for('quiz', transcription_id=transcription.id) }}" class="quiz-button">Reprendre le quiz</a>
+    </div>
+    <div class="final-result">
+        {% if percentage >= 70 %}
+            <div class="result-content">
+                <p class="text success-text">
+                    <i class="fas fa-check-circle"></i> Félicitations ! Vous avez réussi !
+                </p>
+                <img src="{{ url_for('static', filename='images/dns.png') }}" alt="Succès" class="result-image">
+            </div>
+        {% else %}
+            <div class="result-content">
+                <p class="text failure-text">
+                    <i class="fas fa-check-circle"></i> Oups... Vous avez échoué !
+                </p>
+                <img src="{{ url_for('static', filename='images/failed.png') }}" alt="Échec" class="result-image">
+            </div>
+        {% endif %}
+    </div>
+
+    {% for result in results %}
+    <div class="question-result">
+        <h3>Question {{ loop.index }}: {{ result.question_text }}</h3>
+
+        <ul>
+            {% for choice in result.choices %}
+            <li class="
+                {% if choice == result.user_answer %}
+                    {% if choice == result.correct_answer %}
+                        correct
+                    {% else %}
+                        incorrect
+                    {% endif %}
+                {% endif %}">
+                {{ choice }}
+                {% if choice == result.correct_answer and choice == result.user_answer %}
+                    <i class="fas fa-check-circle correct-icon"></i>
+                {% elif choice == result.user_answer and choice != result.correct_answer %}
+                    <i class="fas fa-times-circle incorrect-icon"></i>
+                {% elif choice == result.correct_answer %}
+                    <i class="fas fa-check-circle correct-icon"></i>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+
+    {% if current_user.is_authenticated %}
+        <div style="position: absolute; top: 20px; right: 20px;">
+            <a href="{{ url_for('logout') }}"
+               style="
+                   position: relative;
+                   padding: 10px 20px;
+                   background: linear-gradient(90deg, #fda085, #f6d365);
+                   color: white;
+                   border: none;
+                   border-radius: 25px;
+                   text-decoration: none;
+                   font-weight: bold;
+                   font-size: 0.9em;
+                   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                   transition: transform 0.2s;
+                   display: inline-block;
+               "
+               onmouseover="this.style.transform='scale(1.05)'"
+               onmouseout="this.style.transform='scale(1)'"
+            >
+                Déconnexion
+            </a>
+        </div>
+    {% endif %}
+
+</body>
+</html>
