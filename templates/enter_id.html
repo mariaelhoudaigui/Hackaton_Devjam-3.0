@@ -89,6 +89,14 @@
             margin-right: 10px;
             vertical-align: middle;
         }
+        .error-message {
+            color: #e74c3c; /* Rouge doux */
+            padding: 8px 12px;
+            font-size: 12px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
     </style>
 </head>
 <body>
@@ -121,8 +129,13 @@
             Déconnexion
         </a>
     </div>
+    {% if error %}
+          <div class="error-message">{{ error }}</div>
+    {% endif %}
+
 {% endif %}
     </form>
+   
 
 </body>
 </html>

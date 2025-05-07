@@ -475,7 +475,8 @@ def validate_id():
         # Redirect to a new page that shows the content
         return redirect(url_for('show_content', transcription_id=transcription_id))
     else:
-        return "ID invalide. Veuillez réessayer.", 400
+        return render_template('enter_id.html', error="ID invalide. Veuillez réessayer.")
+
 
 @app.route('/show_content/<transcription_id>', methods=['GET'])
 @login_required
